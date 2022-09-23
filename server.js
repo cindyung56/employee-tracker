@@ -9,7 +9,8 @@ const db = mysql.createConnection(
         password: 'dodococo',
         database: 'employee_db',
     },
-    console.log(`------------------
+console.log(
+`------------------
 EMPLOYEE MANAGER
 ------------------
 `)
@@ -19,35 +20,79 @@ EMPLOYEE MANAGER
 
 // displays department data in a table
 function displayDepartments(){
-    db.query("SELECT * FROM department", (err, data) => {
-        err ? console.error(err) : console.table(data);
+    db.promise().query("SELECT * FROM department")
+    .then(([rows]) => {
+        const departmentArray = rows;
+        console.table(departmentArray);
     })
+    .then(() => userInterface())
 }
 
 // displays role data in a table
 function displayRoles(){
-    db.query(`SELECT role.id, role.title, department.name AS department, role.salary
+    db.promise().query(`SELECT role.id, role.title, department.name AS department, role.salary
     FROM role
     LEFT JOIN department ON role.department_id = department.id
-    ORDER BY role.id`, (err, data) => {
-        err ? console.error(err) : console.table(data);
+    ORDER BY role.id`)
+    .then(([rows]) => {
+        const roleArray = rows;
+        console.table(roleArray);
     })
+    .then(() => userInterface())
 }
 
 // displays employee data in a table
-// TODO: make the manager appear as the name instead of the id
 function displayEmployees(){
-    db.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id, CONCAT(manager.first_name, " ", manager.last_name) as manager_name
+    db.promise().query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) as manager_name
     FROM employee
     LEFT JOIN role ON employee.role_id = role.id
     LEFT JOIN department ON role.department_id = department.id
-    LEFT JOIN employee manager ON manager.id = employee.manager_id;`, (err, data) => {
-        err ? console.error(err) : console.table(data);
+    LEFT JOIN employee manager ON manager.id = employee.manager_id;`)
+    .then(([rows]) => {
+        const employeeArray = rows;
+        console.table(employeeArray);
     })
+    .then(() => userInterface())
 }
 
+// add employee
+function addEmployee(){
 
+}
 
+// update employee role
+function updateEmployee(){
+
+}
+
+// add role
+function addRole(){
+
+}
+
+// add department
+function addDepartment(){
+    inquirer.prompt(
+        {
+            name: "departmentName",
+            type: "input",
+            message: "What is the name of the department?"
+        }
+    )
+    .then((response) => {
+        if (response.departmentName){
+            db.promise().query(`INSERT INTO department (name) VALUES (?)`, response.departmentName)
+            .then(() => {
+                console.log(`Added ${response.departmentName} to the database`);
+            })
+            .then(() => userInterface())
+        } else{
+            console.log("That is not a valid input. Please try again.");
+            addDepartment();
+        }
+    })
+    
+}
 
 
 
@@ -62,12 +107,12 @@ function userInterface(){
          type: 'list',
          message: "What would you like to do?",
          choices: [
-            'View All Employees',
+            'View All Employees', // done
             'Add Employee',
             'Update Employee Role',
-            'View All Roles',
+            'View All Roles', // done
             'Add Role',
-            'View All Departments',
+            'View All Departments', // done
             'Add Department'
          ]
         }
@@ -83,9 +128,11 @@ function userInterface(){
             case "View All Departments":
                 displayDepartments();
                 break;
+            case "Add Department":
+                addDepartment();
+                break;
         }
 
-        // userInterface();
     })
 }
 
