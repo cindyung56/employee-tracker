@@ -1,7 +1,9 @@
+// import necessary packages
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 
+// create a connection to the employee_db database
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -15,6 +17,7 @@ EMPLOYEE MANAGER
 ------------------
 `)
 );
+
 
 // Helper functions to read data from mySQL database
 
@@ -54,9 +57,6 @@ function displayEmployees(){
     })
     .then(() => userInterface())
 }
-
-
-
 
 // add employee by asking for their name, role, and who they work under
 function addEmployee(){
