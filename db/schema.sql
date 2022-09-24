@@ -5,11 +5,14 @@ CREATE DATABASE employee_db;
 -- start using the database --
 USE employee_db;
 
+-- create department table --
 CREATE TABLE department(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );
 
+-- create role table --
+-- department_id references the id from the department table --
 CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
@@ -20,6 +23,9 @@ CREATE TABLE role (
     ON DELETE SET NULL
 );
 
+-- create employee table --
+-- role_id references the id from the role table --
+-- manager_id refers to the specific employee with that particular id --
 CREATE TABLE employee(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
